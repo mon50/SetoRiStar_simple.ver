@@ -1,4 +1,6 @@
+import UserForm from "@/app/[userId]/components/UserForm";
 import { createClient } from "@/utils/supabase/server";
+import { redirect } from "next/navigation";
 
 export default async function UserPage() {
   const supabase = createClient();
@@ -7,9 +9,10 @@ export default async function UserPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  return (
-    <>
-      <p>UserPage</p>
-    </>
-  );
+  if (!user) {
+    redirect("/login");
+  }
+  console.log("user", user);
+
+  return <UserForm authId={user.id} />;
 }
