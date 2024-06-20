@@ -1,5 +1,5 @@
 "use client";
-import { Fragment, useState } from "react";
+import { Fragment, useCallback, useEffect, useState } from "react";
 import {
   Dialog,
   DialogPanel,
@@ -7,14 +7,87 @@ import {
   Transition,
   TransitionChild,
 } from "@headlessui/react";
-import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
+import MusicNoteIcon from "@mui/icons-material/MusicNote";
+import { createClient } from "@/utils/supabase/client";
+import { LiveData } from "@/types/ArtistType";
+import { IconButton } from "@mui/material";
+import ClearIcon from "@mui/icons-material/Clear";
+import { useRouter } from "next/navigation";
 
-export default function ModalExample() {
-  const [open, setOpen] = useState(true);
+export default function ModalExample({
+  isOpen,
+  setIsOpen,
+  date,
+  userId,
+}: {
+  isOpen: boolean;
+  setIsOpen: Function;
+  date?: Date | null;
+  userId: string;
+}) {
+  const [liveData, setLiveData] = useState<LiveData[]>([]);
+  const router = useRouter();
+  const year = date?.getFullYear();
+  const month =
+    date?.getMonth() !== undefined ? date.getMonth() + 1 : undefined; // 月は0から始まるため、1を加算
+  const day = date?.getDate();
+
+  const [loading, setLoading] = useState(true);
+  const supabase = createClient();
+  const getUserLive = useCallback(async () => {
+    if (!userId || !date) return;
+
+    try {
+      setLoading(true);
+
+      const { data: liveIdsData, error: liveIdsError } = await supabase
+        .from("user_live_schedules")
+        .select("live_id")
+        .eq("user_id", userId);
+
+      if (liveIdsError) {
+        console.error("Error fetching live IDs:", liveIdsError);
+        return [];
+      }
+
+      const liveIds = liveIdsData.map((item) => item.live_id);
+
+      //FIXME:artist不要
+      const { data: liveData, error: liveDataError } = await supabase
+        .from("lives")
+        .select(
+          `
+                *,
+                artists (
+                    artist_name
+                )
+            `
+        )
+        .in("live_id", liveIds)
+        .eq("date", `${year}-${month}-${day}`) // 日付をISO形式に変換//FIXME:一件のみ取得
+        .order("date", { ascending: false });
+
+      if (liveDataError) {
+        console.error("Error fetching live data:", liveDataError);
+        return [];
+      }
+      setLiveData(liveData);
+      console.log(liveData);
+    } catch (error) {
+      alert("Error loading user data!");
+    } finally {
+      setLoading(false);
+    }
+  }, [userId, date, supabase]);
+
+  useEffect(() => {
+    getUserLive();
+    console.log(userId);
+  }, [userId, date, getUserLive]);
 
   return (
-    <Transition show={open}>
-      <Dialog className="relative z-10" onClose={setOpen}>
+    <Transition show={isOpen}>
+      <Dialog className="relative z-10" onClose={() => setIsOpen(false)}>
         <TransitionChild
           enter="ease-out duration-300"
           enterFrom="opacity-0"
@@ -38,45 +111,68 @@ export default function ModalExample() {
             >
               <DialogPanel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
                 <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
-                  <div className="sm:flex sm:items-start">
-                    <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
-                      <ExclamationTriangleIcon
-                        className="h-6 w-6 text-red-600"
+                  <div className="sm:flex sm:items-start w-full">
+                    <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-secondary-main sm:mx-0 sm:h-10 sm:w-10">
+                      <MusicNoteIcon
+                        className="h-6 w-6 text-primary-light"
                         aria-hidden="true"
                       />
                     </div>
-                    <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+                    <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left flex-grow">
                       <DialogTitle
                         as="h3"
                         className="text-base font-semibold leading-6 text-gray-900"
                       >
-                        Deactivate account
+                        {year}/{month}/{day}
                       </DialogTitle>
-                      <div className="mt-2">
-                        <p className="text-sm text-gray-500">
-                          Are you sure you want to deactivate your account? All
-                          of your data will be permanently removed. This action
-                          cannot be undone.
-                        </p>
+                      <div className="mt-2 w-full">
+                        {loading ? (
+                          <p>読み込み中...</p>
+                        ) : (
+                          <p className="text-sm text-gray-500">
+                            {liveData.length > 0 ? (
+                              <div className="w-full flex justify-between items-center">
+                                <p>{liveData[0].live_title}</p>
+                                <IconButton
+                                  className="text-gray-500 hover:text-gray-700 focus:outline-none"
+                                  onClick={() => {
+                                    /* Xボタンのクリックハンドラ */
+                                  }}
+                                >
+                                  <ClearIcon className="text-red-500" />
+                                </IconButton>
+                              </div>
+                            ) : (
+                              <span>
+                                この日に予定されているライブはありません。
+                              </span>
+                            )}
+                          </p>
+                        )}
                       </div>
                     </div>
                   </div>
                 </div>
-                <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                <div className="bg-secondary-light px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
                   <button
                     type="button"
-                    className="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto"
-                    onClick={() => setOpen(false)}
+                    className="inline-flex w-full justify-center rounded-md border bg-secondary-main px-3 py-2 text-sm font-semibold text-primary-main shadow-sm hover:bg-secondary-dark sm:ml-3 sm:w-auto"
+                    onClick={() => {
+                      setIsOpen(false);
+                      router.push(
+                        `/add?date=${year}-${month}-${day}&userId=${userId}`
+                      );
+                    }}
                   >
-                    Deactivate
+                    登録
                   </button>
                   <button
                     type="button"
                     className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
-                    onClick={() => setOpen(false)}
+                    onClick={() => setIsOpen(false)}
                     data-autofocus
                   >
-                    Cancel
+                    戻る
                   </button>
                 </div>
               </DialogPanel>

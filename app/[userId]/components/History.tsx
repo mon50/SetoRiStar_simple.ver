@@ -7,7 +7,6 @@ import React, { useCallback, useEffect, useState } from "react";
 import { IconButton } from "@mui/material";
 
 const History = ({ userId }: { userId: string }) => {
-  //TODO: ユーザーのライブ情報を取得し、Cardに一つずつ送信する
   const [liveData, setLiveData] = useState<LiveData[]>([]);
 
   const [loading, setLoading] = useState(true);

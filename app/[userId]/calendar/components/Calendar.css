@@ -1,0 +1,41 @@
+.fc .fc-toolbar.fc-header-toolbar {
+  @apply text-primary-dark font-bold;
+}
+
+.fc-daygrid-day {
+  @apply border-secondary-main;
+}
+
+.fc-day-today {
+  @apply bg-primary-light;
+}
+
+.fc-daygrid-day-number {
+  @apply text-primary-dark;
+}
+
+.fc-daygrid-event {
+  @apply bg-secondary-main border-none rounded-sm p-1;
+}
+
+.fc-event-title {
+  @apply text-primary-dark font-bold;
+}
+
+/* Button styles */
+.fc-button {
+  @apply bg-primary-main rounded-md p-1.5 px-3; /* Tailwind's custom primary.main, tertiary.light, rounded-sm, p-1.5, and px-3 */
+  transition: background-color 0.3s ease; /* Custom transition */
+}
+
+.fc-button:hover {
+  @apply bg-primary-dark; /* Tailwind's custom primary.dark and secondary.light */
+}
+
+/* Weekend styles */
+.fc-day-sat {
+  @apply text-blue-500; /* Tailwind's custom secondary.light and secondary.dark */
+}
+.fc-day-sun {
+  @apply text-red-500; /* Tailwind's custom secondary.light and secondary.dark */
+}
