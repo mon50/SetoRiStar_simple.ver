@@ -61,7 +61,7 @@ const UserForm = ({ authId }: { authId: string }) => {
       <Profile user={user} />
       <hr className="border-t-2 border-gray-300 my-4" />
       {user_id && <History userId={user_id} />}
-    </>
+    </div>
   );
 };
 
