@@ -3,7 +3,7 @@ import React from "react";
 
 const page = () => {
   return (
-    <div className="h-screen flex flex-grow">
+    <div className="flex-grow overflow-auto p-4 sm:p-6 md:p-8">
       <Calendar />
     </div>
   );

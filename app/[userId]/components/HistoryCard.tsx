@@ -19,27 +19,29 @@ const HistoryCard = ({ livedata }: { livedata: LiveData }) => {
   return (
     <div
       key={livedata.live_id}
-      className="flex flex-grow justify-between m-4 bg-secondary-main border border-tertiary-main rounded-md shadow-xl p-4"
+      className="flex flex-col sm:flex-row justify-between bg-secondary-main border border-tertiary-main rounded-md shadow-xl p-4"
     >
-      <div className="flex">
+      <div className="flex flex-col sm:flex-row items-center sm:items-start mb-4 sm:mb-0">
         <DateDisplay dateStr={livedata.date.toString()} />
-        <div className="pl-6">
-          {" "}
-          <h1 className="text-2xl font-bold">{livedata.live_title}</h1>
-          {/* <p>{livedata.artists.map((artist))}</p> */}
-          <p>{livedata.venue}</p>
+        <div className="mt-4 sm:mt-0 sm:ml-6 text-center sm:text-left">
+          <h1 className="text-xl sm:text-2xl font-bold">
+            {livedata.live_title}
+          </h1>
+          <p className="mt-2">{livedata.venue}</p>
           <p>{livedata.capacity ? livedata.capacity : "-"}</p>
         </div>
       </div>
-      {isBeforeYesterday(livedata.date) ? (
-        <IconButton className="w-1/9 rounded h-full bg-secondary-main rounded-lg flex justify-center align-center p-6 border shadow-inner">
-          <ChatIcon className="text-primary-light" />
-        </IconButton>
-      ) : (
-        <IconButton className="w-1/9 rounded h-1/3 bg-secondary-main rounded-lg flex justify-start align-center p-2 border shadow-inner">
-          <ClearIcon className="text-red-500" />
-        </IconButton>
-      )}
+      <div className="flex justify-center sm:justify-end mt-4 sm:mt-0">
+        {isBeforeYesterday(livedata.date) ? (
+          <IconButton className="bg-secondary-main rounded-lg flex justify-center items-center p-2 sm:p-4 border shadow-inner">
+            <ChatIcon className="text-primary-light" />
+          </IconButton>
+        ) : (
+          <IconButton className="bg-secondary-main rounded-lg flex justify-center items-center p-2 sm:p-4 border shadow-inner">
+            <ClearIcon className="text-red-500" />
+          </IconButton>
+        )}
+      </div>
     </div>
   );
 };

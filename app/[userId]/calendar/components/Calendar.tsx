@@ -8,6 +8,7 @@ import { useCallback, useEffect, useState } from "react";
 import { LiveData } from "@/types/ArtistType";
 import { createClient } from "@/utils/supabase/client";
 import ModalExample from "@/components/common/Modal";
+import { useMediaQuery, useTheme } from "@mui/material";
 
 export default function Calendar() {
   const cookies = parseCookies();
@@ -15,6 +16,9 @@ export default function Calendar() {
   const [liveData, setLiveData] = useState<LiveData[]>([]);
   const [clickedDate, setClickedDate] = useState<Date | null>(null); // 追加
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const [loading, setLoading] = useState(true);
   const supabase = createClient();
@@ -93,41 +97,45 @@ export default function Calendar() {
   });
 
   return (
-    <div className="w-full p-6 m-4 bg-tertiary-main rounded-lg shadow-md">
+    <div className="w-full p-2 sm:p-4 md:p-6 bg-tertiary-main rounded-lg shadow-md overflow-hidden">
       <ModalExample
         isOpen={isModalOpen}
         setIsOpen={setIsModalOpen}
         date={clickedDate}
         userId={userId}
       />
-      <FullCalendar
-        plugins={[dayGridPlugin, interactionPlugin]}
-        initialView="dayGridMonth"
-        dateClick={handleDateClick}
-        weekends={true}
-        firstDay={1}
-        events={events}
-        headerToolbar={{
-          start: "prev,next today",
-          center: "title",
-          end: "dayGridMonth,dayGridWeek,dayGridDay",
-        }}
-        buttonText={{
-          today: "今日",
-          month: "月",
-          week: "週",
-          day: "日",
-        }}
-        dayCellClassNames={dayCellClassNames}
-        customButtons={{
-          custom1: {
-            text: "Custom Button",
-            click: function () {
-              alert("clicked the custom button!");
-            },
-          },
-        }}
-      />
+      <div className="calendar-container">
+        <FullCalendar
+          plugins={[dayGridPlugin, interactionPlugin]}
+          initialView="dayGridMonth"
+          dateClick={handleDateClick}
+          weekends={true}
+          firstDay={1}
+          events={events}
+          headerToolbar={
+            isMobile
+              ? {
+                  start: "prev,next",
+                  center: "title",
+                  end: "",
+                }
+              : {
+                  start: "prev,next today",
+                  center: "title",
+                  end: "dayGridMonth,dayGridWeek,dayGridDay",
+                }
+          }
+          buttonText={{
+            today: "今日",
+            month: "月",
+            week: "週",
+            day: "日",
+          }}
+          dayCellClassNames={dayCellClassNames}
+          height="auto"
+          aspectRatio={1.35}
+        />
+      </div>
     </div>
   );
 }
