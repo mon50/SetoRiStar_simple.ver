@@ -1,17 +1,21 @@
+import React from "react";
 import DateDisplay from "@/app/[userId]/components/DateDisplay";
-import AddScheduleButton from "@/components/common/addSchedule.button";
 import { LiveData } from "@/types/ArtistType";
 import { IconButton } from "@mui/material";
-import React from "react";
-import ClearIcon from "@mui/icons-material/Clear";
 import ChatIcon from "@mui/icons-material/Chat";
+import { DeleteButton } from "@/components/common/DeleteButton";
 
-const HistoryCard = ({ livedata }: { livedata: LiveData }) => {
-  const today = new Date();
-  const yesterday = new Date(today);
-  yesterday.setDate(today.getDate() - 1);
-
-  const isBeforeYesterday = (dateStr: Date) => {
+const HistoryCard = ({
+  livedata,
+  userId,
+}: {
+  livedata: LiveData;
+  userId?: string;
+}) => {
+  const isBeforeOrEqualToYesterday = (dateStr: Date) => {
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1);
     const date = new Date(dateStr);
     return date <= yesterday;
   };
@@ -23,25 +27,23 @@ const HistoryCard = ({ livedata }: { livedata: LiveData }) => {
     >
       <div className="flex flex-col sm:flex-row items-center sm:items-start mb-4 sm:mb-0">
         <DateDisplay dateStr={livedata.date.toString()} />
-        <div className="mt-4 sm:mt-0 sm:ml-6 text-center sm:text-left">
-          <h1 className="text-xl sm:text-2xl font-bold">
-            {livedata.live_title}
-          </h1>
-          <p className="mt-2">{livedata.venue}</p>
+        <div className="pl-6">
+          <h1 className="text-2xl font-bold">{livedata.live_title}</h1>
+          <p>{livedata.venue}</p>
           <p>{livedata.capacity ? livedata.capacity : "-"}</p>
         </div>
       </div>
-      <div className="flex justify-center sm:justify-end mt-4 sm:mt-0">
-        {isBeforeYesterday(livedata.date) ? (
-          <IconButton className="bg-secondary-main rounded-lg flex justify-center items-center p-2 sm:p-4 border shadow-inner">
-            <ChatIcon className="text-primary-light" />
-          </IconButton>
-        ) : (
-          <IconButton className="bg-secondary-main rounded-lg flex justify-center items-center p-2 sm:p-4 border shadow-inner">
-            <ClearIcon className="text-red-500" />
-          </IconButton>
-        )}
-      </div>
+      {isBeforeOrEqualToYesterday(livedata.date) ? (
+        <IconButton className="w-1/9 rounded h-full bg-secondary-main rounded-lg flex justify-center align-center p-6 border shadow-inner">
+          <ChatIcon className="text-primary-light" />
+        </IconButton>
+      ) : userId ? (
+        <DeleteButton userId={userId} liveId={livedata.live_id} />
+      ) : (
+        <IconButton disabled>
+          <ChatIcon className="text-gray-400" />
+        </IconButton>
+      )}
     </div>
   );
 };

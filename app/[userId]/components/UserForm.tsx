@@ -53,13 +53,15 @@ const UserForm = ({ authId }: { authId: string }) => {
     getUser();
     console.log(authId);
   }, [authId, getUser]);
-
+  if (loading) {
+    return <p>読み込み中...</p>;
+  }
   return (
     <div className="p-4 sm:p-6 md:p-8 max-w-4xl mx-auto">
       <Profile user={user} />
-      <hr className="border-t-2 border-gray-300 my-4 sm:my-6" />
-      <History userId={user_id} />
-    </div>
+      <hr className="border-t-2 border-gray-300 my-4" />
+      {user_id && <History userId={user_id} />}
+    </>
   );
 };
 

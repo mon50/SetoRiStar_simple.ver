@@ -10,9 +10,8 @@ import {
 import MusicNoteIcon from "@mui/icons-material/MusicNote";
 import { createClient } from "@/utils/supabase/client";
 import { LiveData } from "@/types/ArtistType";
-import { IconButton } from "@mui/material";
-import ClearIcon from "@mui/icons-material/Clear";
 import { useRouter } from "next/navigation";
+import { DeleteButton } from "@/components/common/DeleteButton";
 
 export default function ModalExample({
   isOpen,
@@ -132,15 +131,15 @@ export default function ModalExample({
                           <p className="text-sm text-gray-500">
                             {liveData.length > 0 ? (
                               <div className="w-full flex justify-between items-center">
-                                <p>{liveData[0].live_title}</p>
-                                <IconButton
-                                  className="text-gray-500 hover:text-gray-700 focus:outline-none"
-                                  onClick={() => {
-                                    /* Xボタンのクリックハンドラ */
-                                  }}
-                                >
-                                  <ClearIcon className="text-red-500" />
-                                </IconButton>
+                                {liveData.map((live) => (
+                                  <Fragment key={live.live_id}>
+                                    <p>{live.live_title}</p>
+                                    <DeleteButton
+                                      userId={userId}
+                                      liveId={live.live_id}
+                                    />
+                                  </Fragment>
+                                ))}
                               </div>
                             ) : (
                               <span>

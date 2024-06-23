@@ -65,18 +65,24 @@ const History = ({ userId }: { userId: string }) => {
   }
 
   return (
-    <div className="mt-4 sm:mt-6">
-      {liveData.length > 0 ? (
-        <div>
-          <div className="flex justify-end mb-2 sm:mb-4">
-            <IconButton>
-              <AddCircleOutlineIcon className="text-primary-light" />
-            </IconButton>
-          </div>
-          <div className="grid gap-4 sm:gap-6">
-            {liveData.map((livedata) => (
-              <HistoryCard key={livedata.live_id} livedata={livedata} />
-            ))}
+    <>
+      <div>
+        {liveData.length > 0 ? (
+          <div>
+            <div className="flex justify-end mr-6">
+              <IconButton>
+                <AddCircleOutlineIcon className="text-primary-light" />
+              </IconButton>
+            </div>
+            <div>
+              {liveData.map((livedata) => (
+                <HistoryCard
+                  key={livedata.live_id}
+                  livedata={livedata}
+                  userId={userId}
+                />
+              ))}
+            </div>
           </div>
         </div>
       ) : (
