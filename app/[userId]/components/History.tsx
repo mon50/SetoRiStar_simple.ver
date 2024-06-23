@@ -49,7 +49,8 @@ const History = ({ userId }: { userId: string }) => {
       setLiveData(liveData);
       console.log(liveData);
     } catch (error) {
-      alert("Error loading user data!");
+      console.error("Error loading user data!");
+      console.error(error);
     } finally {
       setLoading(false);
     }
@@ -66,7 +67,7 @@ const History = ({ userId }: { userId: string }) => {
 
   return (
     <>
-      <div>
+      <>
         {liveData.length > 0 ? (
           <div>
             <div className="flex justify-end mr-6">
@@ -84,11 +85,11 @@ const History = ({ userId }: { userId: string }) => {
               ))}
             </div>
           </div>
-        </div>
-      ) : (
-        <div className="text-center py-4">No live schedule</div>
-      )}
-    </div>
+        ) : (
+          <div className="text-center py-4">No live schedule</div>
+        )}
+      </>
+    </>
   );
 };
 
