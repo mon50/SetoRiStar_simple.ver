@@ -77,7 +77,7 @@ export default function ModalExample({
     } finally {
       setLoading(false);
     }
-  }, [userId, date, supabase]);
+  }, [userId, date, supabase, year, month, day]);
 
   useEffect(() => {
     getUserLive();

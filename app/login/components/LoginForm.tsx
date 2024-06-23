@@ -56,7 +56,7 @@ const LoginForm = () => {
           <p className="text-red-500 text-sm mt-2">{loginError}</p>
         )}
         <p className="text-sm !mt-10 text-center text-primary-dark">
-          Don't have an account{" "}
+          Don&apos;t have an account{" "}
           <button
             type="button"
             onClick={() => {

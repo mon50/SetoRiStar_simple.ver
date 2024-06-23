@@ -1,11 +1,12 @@
 import { ConnectUserInfo } from "@/types/AccountType";
+import Image from "next/image";
 import React from "react";
 
 const UserProfile = ({ user }: { user: ConnectUserInfo }) => {
   return (
     <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 sm:gap-10">
       <div className="relative rounded-full w-32 h-32 sm:w-40 sm:h-40 bg-gray-200 shadow-md overflow-hidden">
-        <img
+        <Image
           src={user.display_image}
           alt="ユーザーアイコン"
           className="absolute top-0 left-0 w-full h-full object-cover"

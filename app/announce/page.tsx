@@ -2,11 +2,7 @@ import ModalExample from "@/components/common/Modal";
 import React from "react";
 
 const AnnouncePage = () => {
-  return (
-    <div>
-      <ModalExample />
-    </div>
-  );
+  return <div>Modal</div>;
 };
 
 export default AnnouncePage;
