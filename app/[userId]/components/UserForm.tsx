@@ -53,13 +53,14 @@ const UserForm = ({ authId }: { authId: string }) => {
     getUser();
     console.log(authId);
   }, [authId, getUser]);
-
+  if (loading) {
+    return <p>読み込み中...</p>;
+  }
   return (
     <>
       <Profile user={user} />
-      {/* 線を引く */}
       <hr className="border-t-2 border-gray-300 my-4" />
-      <History userId={user_id} />
+      {user_id && <History userId={user_id} />}
     </>
   );
 };

@@ -1,17 +1,21 @@
+import React from "react";
 import DateDisplay from "@/app/[userId]/components/DateDisplay";
-import AddScheduleButton from "@/components/common/addSchedule.button";
 import { LiveData } from "@/types/ArtistType";
 import { IconButton } from "@mui/material";
-import React from "react";
-import ClearIcon from "@mui/icons-material/Clear";
 import ChatIcon from "@mui/icons-material/Chat";
+import { DeleteButton } from "@/components/common/DeleteButton";
 
-const HistoryCard = ({ livedata }: { livedata: LiveData }) => {
-  const today = new Date();
-  const yesterday = new Date(today);
-  yesterday.setDate(today.getDate() - 1);
-
-  const isBeforeYesterday = (dateStr: Date) => {
+const HistoryCard = ({
+  livedata,
+  userId,
+}: {
+  livedata: LiveData;
+  userId?: string;
+}) => {
+  const isBeforeOrEqualToYesterday = (dateStr: Date) => {
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1);
     const date = new Date(dateStr);
     return date <= yesterday;
   };
@@ -24,20 +28,20 @@ const HistoryCard = ({ livedata }: { livedata: LiveData }) => {
       <div className="flex">
         <DateDisplay dateStr={livedata.date.toString()} />
         <div className="pl-6">
-          {" "}
           <h1 className="text-2xl font-bold">{livedata.live_title}</h1>
-          {/* <p>{livedata.artists.map((artist))}</p> */}
           <p>{livedata.venue}</p>
           <p>{livedata.capacity ? livedata.capacity : "-"}</p>
         </div>
       </div>
-      {isBeforeYesterday(livedata.date) ? (
+      {isBeforeOrEqualToYesterday(livedata.date) ? (
         <IconButton className="w-1/9 rounded h-full bg-secondary-main rounded-lg flex justify-center align-center p-6 border shadow-inner">
           <ChatIcon className="text-primary-light" />
         </IconButton>
+      ) : userId ? (
+        <DeleteButton userId={userId} liveId={livedata.live_id} />
       ) : (
-        <IconButton className="w-1/9 rounded h-1/3 bg-secondary-main rounded-lg flex justify-start align-center p-2 border shadow-inner">
-          <ClearIcon className="text-red-500" />
+        <IconButton disabled>
+          <ChatIcon className="text-gray-400" />
         </IconButton>
       )}
     </div>

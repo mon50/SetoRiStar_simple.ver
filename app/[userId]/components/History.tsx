@@ -75,7 +75,11 @@ const History = ({ userId }: { userId: string }) => {
             </div>
             <div>
               {liveData.map((livedata) => (
-                <HistoryCard key={livedata.live_id} livedata={livedata} />
+                <HistoryCard
+                  key={livedata.live_id}
+                  livedata={livedata}
+                  userId={userId}
+                />
               ))}
             </div>
           </div>
