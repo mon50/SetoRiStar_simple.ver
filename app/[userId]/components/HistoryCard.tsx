@@ -23,9 +23,9 @@ const HistoryCard = ({
   return (
     <div
       key={livedata.live_id}
-      className="flex flex-grow justify-between m-4 bg-secondary-main border border-tertiary-main rounded-md shadow-xl p-4"
+      className="flex flex-col sm:flex-row justify-between bg-secondary-main border border-tertiary-main rounded-md shadow-xl p-4"
     >
-      <div className="flex">
+      <div className="flex flex-col sm:flex-row items-center sm:items-start mb-4 sm:mb-0">
         <DateDisplay dateStr={livedata.date.toString()} />
         <div className="pl-6">
           <h1 className="text-2xl font-bold">{livedata.live_title}</h1>

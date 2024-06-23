@@ -11,7 +11,7 @@ const AddLiveButton = () => {
 
   return (
     <IconButton
-      className="rounded-full shadow-xl w-16 h-16 bg-tertiary-light hover:bg-tertiary-main"
+      className="rounded-full shadow-xl w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 bg-tertiary-light hover:bg-tertiary-main"
       onClick={() => router.push(`/add?userId=${cookies.userId}`)}
     >
       <PostAddIcon className="text-primary-main w-full h-full" />

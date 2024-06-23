@@ -61,8 +61,9 @@ const History = ({ userId }: { userId: string }) => {
   }, [userId, getUserLive]);
 
   if (loading) {
-    return <p>読み込み中...</p>; // ユーザーデータを取得中に読み込み状態を表示
+    return <p className="text-center py-4">読み込み中...</p>;
   }
+
   return (
     <>
       <div>
@@ -83,11 +84,11 @@ const History = ({ userId }: { userId: string }) => {
               ))}
             </div>
           </div>
-        ) : (
-          <div>No live schedule</div>
-        )}
-      </div>
-    </>
+        </div>
+      ) : (
+        <div className="text-center py-4">No live schedule</div>
+      )}
+    </div>
   );
 };
 

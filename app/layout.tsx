@@ -19,11 +19,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="jp">
-      <body className={inter.className}>
+      <body className="h-dvh flex flex-col">
         <Header />
-        <div className="flex">
+        <div className="flex flex-grow overflow-hidden">
           <SidebarL />
-          <div className="flex-grow bg-secondary-main">{children}</div>
+          <div className="flex-grow bg-secondary-main overflow-auto">
+            {children}
+          </div>
           <SidebarR />
         </div>
       </body>
