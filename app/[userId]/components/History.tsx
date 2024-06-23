@@ -7,7 +7,6 @@ import React, { useCallback, useEffect, useState } from "react";
 import { IconButton } from "@mui/material";
 
 const History = ({ userId }: { userId: string }) => {
-  //TODO: ユーザーのライブ情報を取得し、Cardに一つずつ送信する
   const [liveData, setLiveData] = useState<LiveData[]>([]);
 
   const [loading, setLoading] = useState(true);
@@ -62,29 +61,28 @@ const History = ({ userId }: { userId: string }) => {
   }, [userId, getUserLive]);
 
   if (loading) {
-    return <p>読み込み中...</p>; // ユーザーデータを取得中に読み込み状態を表示
+    return <p className="text-center py-4">読み込み中...</p>;
   }
+
   return (
-    <>
-      <div>
-        {liveData.length > 0 ? (
-          <div>
-            <div className="flex justify-end mr-6">
-              <IconButton>
-                <AddCircleOutlineIcon className="text-primary-light" />
-              </IconButton>
-            </div>
-            <div>
-              {liveData.map((livedata) => (
-                <HistoryCard key={livedata.live_id} livedata={livedata} />
-              ))}
-            </div>
+    <div className="mt-4 sm:mt-6">
+      {liveData.length > 0 ? (
+        <div>
+          <div className="flex justify-end mb-2 sm:mb-4">
+            <IconButton>
+              <AddCircleOutlineIcon className="text-primary-light" />
+            </IconButton>
           </div>
-        ) : (
-          <div>No live schedule</div>
-        )}
-      </div>
-    </>
+          <div className="grid gap-4 sm:gap-6">
+            {liveData.map((livedata) => (
+              <HistoryCard key={livedata.live_id} livedata={livedata} />
+            ))}
+          </div>
+        </div>
+      ) : (
+        <div className="text-center py-4">No live schedule</div>
+      )}
+    </div>
   );
 };
 

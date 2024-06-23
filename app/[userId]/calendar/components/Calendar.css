@@ -1,0 +1,61 @@
+.fc {
+  @apply font-sans;
+}
+
+.fc .fc-toolbar.fc-header-toolbar {
+  @apply text-primary-dark font-bold mb-4 flex flex-wrap justify-between items-center;
+}
+
+.fc .fc-toolbar-title {
+  @apply text-lg sm:text-xl md:text-2xl font-bold;
+}
+
+.fc .fc-button {
+  @apply bg-primary-main text-white rounded-md p-1.5 px-3 text-sm sm:text-base transition-colors duration-300 ease-in-out;
+}
+
+.fc .fc-button:hover {
+  @apply bg-primary-dark;
+}
+
+.fc .fc-daygrid-day {
+  @apply border-secondary-main;
+}
+
+.fc .fc-day-today {
+  @apply bg-primary-light;
+}
+
+.fc .fc-daygrid-day-number {
+  @apply text-primary-dark;
+}
+
+.fc .fc-daygrid-event {
+  @apply bg-secondary-main border-none rounded-sm p-1;
+}
+
+.fc .fc-event-title {
+  @apply text-primary-dark font-bold;
+}
+
+.fc .fc-day-sat {
+  @apply text-blue-500;
+}
+
+.fc .fc-day-sun {
+  @apply text-red-500;
+}
+
+@media (max-width: 640px) {
+  .fc .fc-toolbar.fc-header-toolbar {
+    @apply flex-col items-stretch space-y-2;
+  }
+
+  .fc .fc-toolbar-title {
+    @apply text-center;
+  }
+
+  .fc .fc-button-group {
+    @apply flex justify-center;
+  }
+}

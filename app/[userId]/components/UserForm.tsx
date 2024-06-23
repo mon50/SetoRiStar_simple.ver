@@ -55,12 +55,11 @@ const UserForm = ({ authId }: { authId: string }) => {
   }, [authId, getUser]);
 
   return (
-    <>
+    <div className="p-4 sm:p-6 md:p-8 max-w-4xl mx-auto">
       <Profile user={user} />
-      {/* 線を引く */}
-      <hr className="border-t-2 border-gray-300 my-4" />
+      <hr className="border-t-2 border-gray-300 my-4 sm:my-6" />
       <History userId={user_id} />
-    </>
+    </div>
   );
 };
 
