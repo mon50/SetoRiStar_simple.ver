@@ -1,14 +1,10 @@
 //[userid]/page.tsx
 import UserForm from "@/app/[userId]/components/UserForm";
-import { createClient } from "@/utils/supabase/server";
+import GetUser from "@/utils/actions/getUser";
 import { redirect } from "next/navigation";
 
 export default async function UserPage() {
-  const supabase = createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await GetUser();
 
   if (!user) {
     redirect("/login");
