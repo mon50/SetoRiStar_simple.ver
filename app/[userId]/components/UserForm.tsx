@@ -1,66 +1,26 @@
+// UserForm.tsx
 "use client";
 import History from "@/app/[userId]/components/History";
 import Profile from "@/app/[userId]/components/Profile";
-import { ConnectUserInfo } from "@/types/AccountType";
-import { createClient } from "@/utils/supabase/client";
-import { setCookie } from "nookies";
-import React, { useCallback, useEffect, useState } from "react";
+import { useUserInfo } from "@/hooks/useUserInfo";
+import React from "react";
 
 const UserForm = ({ authId }: { authId: string }) => {
-  const [loading, setLoading] = useState(true);
-  const [user_id, setUser_id] = useState<string>("");
-  const [user, setUser] = useState<ConnectUserInfo>({
-    user_id: "",
-    display_name: "",
-    display_image: "",
-    email: "",
-  });
-  const supabase = createClient();
+  const { loading, userId, user } = useUserInfo(authId);
 
-  const getUser = useCallback(async () => {
-    if (!authId) return;
+  if (authId === "") {
+    return <p>ユーザー情報が見つかりません。</p>;
+  }
 
-    try {
-      setLoading(true);
-
-      const { data, error, status } = await supabase
-        .from("users")
-        .select(`user_id,display_name, display_image,email`)
-        .eq("auth_id", authId)
-        .single();
-
-      if (error && status !== 406) {
-        console.log(error);
-        throw error;
-      }
-
-      if (data) {
-        setUser_id(data.user_id);
-        setUser(data);
-        setCookie(null, "userId", data.user_id, {
-          maxAge: 30 * 24 * 60 * 60,
-          path: "/",
-        });
-      }
-    } catch (error) {
-      alert("Error loading user data!");
-    } finally {
-      setLoading(false);
-    }
-  }, [authId, supabase]);
-
-  useEffect(() => {
-    getUser();
-    console.log(authId);
-  }, [authId, getUser]);
   if (loading) {
     return <p>読み込み中...</p>;
   }
+
   return (
     <div className="p-4 sm:p-6 md:p-8 max-w-4xl mx-auto">
       <Profile user={user} />
       <hr className="border-t-2 border-gray-300 my-4" />
-      {user_id && <History userId={user_id} />}
+      {userId && <History userId={userId} />}
     </div>
   );
 };
