@@ -6,12 +6,11 @@ import { useUserInfo } from "@/hooks/useUserInfo";
 import React from "react";
 
 const UserForm = ({ authId }: { authId: string }) => {
-  // authIdが空文字の場合、早期リターンする
-  if (!authId) {
+  const { loading, userId, user } = useUserInfo(authId);
+
+  if (authId === "") {
     return <p>ユーザー情報が見つかりません。</p>;
   }
-
-  const { loading, userId, user } = useUserInfo(authId);
 
   if (loading) {
     return <p>読み込み中...</p>;
