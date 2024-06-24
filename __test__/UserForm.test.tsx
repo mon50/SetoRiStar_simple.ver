@@ -1,13 +1,11 @@
 // UserForm.test.tsx
 import React from "react";
-import { render, screen, waitFor, act } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import UserForm from "@/app/[userId]/components/UserForm";
-import { createClient } from "@/utils/supabase/client";
-import { setCookie } from "nookies";
+import { useUserInfo } from "@/hooks/useUserInfo";
 
 // モックの設定
-jest.mock("@/utils/supabase/client");
-jest.mock("nookies");
+jest.mock("@/hooks/useUserInfo");
 jest.mock("@/app/[userId]/components/Profile", () => {
   return function MockProfile() {
     return <div data-testid="profile">Profile Component</div>;
@@ -32,94 +30,51 @@ describe("UserForm", () => {
     jest.clearAllMocks();
   });
 
-  it("初期状態でローディング表示がされること", async () => {
-    const mockSupabase = {
-      from: jest.fn().mockReturnThis(),
-      select: jest.fn().mockReturnThis(),
-      eq: jest.fn().mockReturnThis(),
-      single: jest
-        .fn()
-        .mockImplementation(
-          () =>
-            new Promise((resolve) =>
-              setTimeout(() => resolve({ data: null }), 100)
-            )
-        ),
-    };
-    (createClient as jest.Mock).mockReturnValue(mockSupabase);
+  it("authIdが空文字の場合、エラーメッセージが表示されること", () => {
+    render(<UserForm authId="" />);
+    expect(
+      screen.getByText("ユーザー情報が見つかりません。")
+    ).toBeInTheDocument();
+    expect(useUserInfo).not.toHaveBeenCalled();
+  });
+
+  it("初期状態でローディング表示がされること", () => {
+    (useUserInfo as jest.Mock).mockReturnValue({
+      loading: true,
+      userId: null,
+      user: null,
+    });
 
     render(<UserForm authId={mockAuthId} />);
 
-    await waitFor(() => {
-      expect(screen.getByText("読み込み中...")).toBeInTheDocument();
-    });
+    expect(screen.getByText("読み込み中...")).toBeInTheDocument();
   });
 
-  it("ユーザーデータが正常に取得された場合、ProfileとHistoryコンポーネントが表示されること", async () => {
-    const mockSupabase = {
-      from: jest.fn().mockReturnThis(),
-      select: jest.fn().mockReturnThis(),
-      eq: jest.fn().mockReturnThis(),
-      single: jest.fn().mockResolvedValue({ data: mockUserData }),
-    };
-    (createClient as jest.Mock).mockReturnValue(mockSupabase);
-
-    await act(async () => {
-      render(<UserForm authId={mockAuthId} />);
+  it("ユーザーデータが正常に取得された場合、ProfileとHistoryコンポーネントが表示されること", () => {
+    (useUserInfo as jest.Mock).mockReturnValue({
+      loading: false,
+      userId: mockUserData.user_id,
+      user: mockUserData,
     });
 
-    await waitFor(() => {
-      expect(screen.queryByText("読み込み中...")).not.toBeInTheDocument();
-      expect(screen.getByTestId("profile")).toBeInTheDocument();
-      expect(screen.getByTestId("history")).toBeInTheDocument();
-    });
+    render(<UserForm authId={mockAuthId} />);
 
-    expect(setCookie).toHaveBeenCalledWith(
-      null,
-      "userId",
-      mockUserData.user_id,
-      expect.objectContaining({
-        maxAge: 30 * 24 * 60 * 60,
-        path: "/",
-      })
-    );
+    expect(screen.queryByText("読み込み中...")).not.toBeInTheDocument();
+    expect(screen.getByTestId("profile")).toBeInTheDocument();
+    expect(screen.getByTestId("history")).toBeInTheDocument();
   });
 
-  it("ユーザーデータの取得に失敗した場合、エラーアラートが表示されること", async () => {
-    const mockSupabase = {
-      from: jest.fn().mockReturnThis(),
-      select: jest.fn().mockReturnThis(),
-      eq: jest.fn().mockReturnThis(),
-      single: jest.fn().mockRejectedValue(new Error("Test error")),
-    };
-    (createClient as jest.Mock).mockReturnValue(mockSupabase);
-
-    const alertMock = jest.spyOn(window, "alert").mockImplementation(() => {});
-
-    await act(async () => {
-      render(<UserForm authId={mockAuthId} />);
+  it("ユーザーデータが取得できない場合、Historyコンポーネントが表示されないこと", () => {
+    (useUserInfo as jest.Mock).mockReturnValue({
+      loading: false,
+      userId: null,
+      user: null,
     });
 
-    await waitFor(() => {
-      expect(alertMock).toHaveBeenCalledWith("Error loading user data!");
-    });
+    render(<UserForm authId={mockAuthId} />);
 
-    alertMock.mockRestore();
-  });
-
-  it("authIdが提供されない場合、ユーザーデータが取得されないこと", async () => {
-    const mockSupabase = {
-      from: jest.fn().mockReturnThis(),
-      select: jest.fn().mockReturnThis(),
-      eq: jest.fn().mockReturnThis(),
-      single: jest.fn(),
-    };
-    (createClient as jest.Mock).mockReturnValue(mockSupabase);
-
-    await act(async () => {
-      render(<UserForm authId="" />);
-    });
-
-    expect(mockSupabase.from).not.toHaveBeenCalled();
+    expect(screen.queryByText("読み込み中...")).not.toBeInTheDocument();
+    expect(screen.getByTestId("profile")).toBeInTheDocument();
+    expect(screen.queryByTestId("history")).not.toBeInTheDocument();
   });
 });

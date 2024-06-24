@@ -10,6 +10,8 @@ const UserProfile = ({ user }: { user: ConnectUserInfo }) => {
           src={user.display_image}
           alt="ユーザーアイコン"
           className="absolute top-0 left-0 w-full h-full object-cover"
+          width={160}
+          height={160}
         />
       </div>
       <div className="flex flex-col justify-center text-center sm:text-left">
